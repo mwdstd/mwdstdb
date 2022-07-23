@@ -17,6 +17,7 @@ from .auth import app as auth_router
 from .rpc import app as rpc_router
 from .lists import app as lists_router
 from .events import app as events_router
+from .meta import app as meta_router
 
 router = APIRouter()
 router.include_router(user_router, prefix='/users')
@@ -38,4 +39,5 @@ router.include_router(auth_router, prefix='/auth')
 router.include_router(rpc_router, prefix='/rpc')
 router.include_router(lists_router)
 router.include_router(events_router, prefix='/events')
+router.include_router(meta_router)
 
