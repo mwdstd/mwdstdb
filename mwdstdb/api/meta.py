@@ -35,7 +35,7 @@ async def get_versions(
         ):
     return [
         {'name': 'mwdstdb', 'version': self_version, 'buildDate': 0, 'description': self_description, 'homepage': 'https://github.com/mwdstd/mwdstdb'},
-        {'name': 'mwdstdcore', 'version': '0.5.0', 'buildDate': 0, 'description': 'MWD STD Basic calculation server', 'homepage': 'https://github.com/mwdstd/mwdstdcore'},
-        {'name': 'mwdstdwits', 'version': '0.5.0', 'buildDate': 0, 'description': 'MWD STD WITS Service', 'homepage': 'https://github.com/mwdstd/mwdstdwits'}
+        {'name': 'mwdstdcore', 'version': '0.5.3', 'buildDate': 0, 'description': 'MWD STD Basic calculation server', 'homepage': 'https://github.com/mwdstd/mwdstdcore'},
+        {'name': 'mwdstdwits', 'version': 'N/A', 'buildDate': 0, 'description': 'MWD STD WITS Service', 'homepage': 'https://github.com/mwdstd/mwdstdwits'}
     ]
 

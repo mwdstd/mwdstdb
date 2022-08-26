@@ -182,10 +182,10 @@ async def update_calc_fields_run(self, run_id: str, correction_task_id: str):
     stations = [{
         'md': s['md'],
         'inc': degrees(acos(s['gz'] / g)),
-        'az': degrees((atan2(a2, a1) + (radians(r['dec'] - r['grid'])) + 2 * pi) % (2 * pi)),
-        'tf': degrees(atan2(s['gx'], -s['gy'])),
+        'az': degrees((atan2(ew, ns) + (radians(r['dec'] - r['grid'])) + 2 * pi) % (2 * pi)),
+        'tf': degrees(atan2(-s['gx'], -s['gy'])),
         'tg': g, 'tb': b, 'dip': degrees(dip)
-    } for s, (g, b, dip, a1, a2), r in zip(run['surveys'], (_calc(x) for x in run['surveys']), reference)]
+    } for s, (g, b, dip, ns, ew), r in zip(run['surveys'], (_calc(x) for x in run['surveys']), reference)]
 
     etag = await crud.compute_etag(db, run_id) if run['status_msa'] else 'manual'
     await crud.update_object(db, models.Run, run_id, {
@@ -208,6 +208,6 @@ def _calc(s):
     g = sqrt(s['gx'] * s['gx'] + s['gy'] * s['gy'] + s['gz'] * s['gz'])
     b = sqrt(s['bx'] * s['bx'] + s['by'] * s['by'] + s['bz'] * s['bz'])
     dip = asin((s['gx'] * s['bx'] + s['gy'] * s['by'] + s['gz'] * s['bz']) / (g * b))
-    a1 = s['bz'] / b - s['gz'] / g * sin(dip)
-    a2 = (s['gy'] * s['bx'] - s['gx'] * s['by']) / (g * b)
-    return g, b, dip, a1, a2
+    ew = (s['gx'] * s['by'] - s['gy'] * s['bx']) * g
+    ns = s['bz'] * (s['gx'] * s['gx'] + s['gy'] * s['gy']) - s['gz'] * (s['gx'] * s['bx'] + s['gy'] * s['by'])
+    return g, b, dip, ns, ew
