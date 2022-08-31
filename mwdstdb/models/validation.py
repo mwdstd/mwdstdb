@@ -3,6 +3,9 @@ from pydantic import BaseModel, Field, validator, root_validator
 
 from .bha import BhaElementType, Material, BhaElement, Blade
 
+
+MAGNETIC_MATERIALS = [Material.chrome_alloy, Material.steel_alloy, Material.steel]
+
 class ValCiStation(BaseModel):
 	md: float
 	inc: float = Field(..., ge=0., le = 180.)
@@ -47,10 +50,9 @@ class ValBhaElement(BaseModel):
     
     @root_validator
     def check_mwd_is_nonmag(cls, values):
-        mag_mats = [Material.chrome_alloy, Material.steel_alloy, Material.steel]
         type, material = values.get('type'), values.get('material')
         if type is not None and material is not None and \
-            type == BhaElementType.mwd and material in mag_mats:
+            type == BhaElementType.mwd and material in MAGNETIC_MATERIALS:
             raise ValueError('Magnetic MWD')
         return values
 
@@ -92,8 +94,28 @@ class ValBHA(BaseModel):
                     cumlen += structure[i].length
                 if dni_to_bit < cumlen or dni_to_bit > cumlen + structure[idx].length:
                     raise ValueError('dni_to_bit is not within MWD')
+            else:
+                raise ValueError('MWD is not present')
         return values
-    
+
+    @root_validator
+    def check_dni_is_far_from_magnetic_parts(cls, values: dict):
+        structure, dni_to_bit = values.get('structure'), values.get('dni_to_bit')
+        if structure is not None:
+            mwd_element_idxs = [i for i, el in enumerate(structure) if el.type == BhaElementType.mwd]
+            if len(mwd_element_idxs) == 1:
+                idx = mwd_element_idxs[0]
+                cumlen = 0
+                for i in range(0, idx):
+                    cumlen += structure[i].length
+                if idx > 0 and structure[idx - 1].material in MAGNETIC_MATERIALS:
+                    if dni_to_bit - cumlen < 1: #less than 1m
+                        raise ValueError('DnI is too close to magnetic material')
+                if idx < len(structure) - 1 and structure[idx + 1].material in MAGNETIC_MATERIALS:
+                    if cumlen + structure[idx].length - dni_to_bit < 1: #less than 1m
+                        raise ValueError('DnI is too close to magnetic material')                
+        return values
+
     @root_validator
     def check_bitsize_gt_ods(cls, values: dict):
         structure: List[ValBhaElement] = values.get('structure')

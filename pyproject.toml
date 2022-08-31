@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mwdstdb"
-version = "0.5.3"
+version = "0.5.4"
 license = "AGPL-3.0-or-later"
 description = "MWD STD Basic data storage and automation backend"
 authors = ["MWD STD Inc. <info@mwdstd.com>"]
