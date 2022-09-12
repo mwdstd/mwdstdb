@@ -22,3 +22,8 @@ async def post(url, request) -> Response:
         raise RPCError()
     return response
 
+async def get(url) -> Response:
+    response = await client.get(f'{calc_url}{url}')
+    if response.is_error:
+        raise RPCError()
+    return response
