@@ -46,7 +46,9 @@ async def get_all_wells(db: AsyncIOMotorDatabase, query: dict = {}, **kwargs):
     return (await db[models.Well._coll].aggregate(pipeline, **kwargs).to_list(None))
 
 async def cdelete_well(db: AsyncIOMotorDatabase, id, **kwargs):
+    id = ObjectId(id)
     children = await get_child_objects(db, models.Borehole, id, **kwargs)
     for child in children:
         await cdelete_borehole(db, child['_id'], **kwargs)
+    await db[models.User._coll].update_many({'well': id}, {'$unset': {'well': ''}}, **kwargs)
     await delete_object(db, models.Well, id, **kwargs)

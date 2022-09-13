@@ -63,6 +63,8 @@ class DniParams(BaseModel):
     MXZ: Angle
     MYZ: Angle
 
+class DniUnc(DniParams):
+    pass
 
 class ManualCorrectionResult(BaseModel):
     surveys: List[ManualCorrectedSurvey]
@@ -77,8 +79,8 @@ class ManualCorrectionResult(BaseModel):
 
 class CorrectionResult(ManualCorrectionResult):
     surveys: List[CorrectedSurvey]
-    apr_unc: Optional[DniParams] #temp optional while DB is not updated
-    apst_unc: Optional[DniParams] #temp optional while DB is not updated
+    apr_unc: Optional[DniUnc] #temp optional while DB is not updated
+    apst_unc: Optional[DniUnc] #temp optional while DB is not updated
     ref_cs: Optional[RefParams] #temp optional while DB is not updated
     ref_unc: Optional[RefParams] #temp optional while DB is not updated
 

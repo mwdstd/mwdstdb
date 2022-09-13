@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel, parse_obj_as
 
 from .models.units import get_unit_converters
-from .models import Survey, ManualCorrectedSurvey
+from .models import Survey, ManualCorrectedSurvey, DniParams, DniUnc
 
 sequence_types = (list, tuple, set, frozenset, GeneratorType)
 
@@ -37,7 +37,7 @@ class AxOrder(BaseModel):
 def ax_ind(mnem: Tuple[str, str, str]):
     return [ord(c.upper()) - ord('X') for c in mnem]
 
-def reorder_axes(s: Union[Survey, ManualCorrectedSurvey], ax_from: AxOrder, ax_to: AxOrder):
+def reorder_axes(s: Union[Survey, ManualCorrectedSurvey, DniParams], ax_from: AxOrder, ax_to: AxOrder):
     fpig = np.array(ax_ind(ax_from.gaxes))
     tpig = np.array(ax_ind(ax_to.gaxes))
     fpim = np.array(ax_ind(ax_from.maxes))
@@ -46,12 +46,25 @@ def reorder_axes(s: Union[Survey, ManualCorrectedSurvey], ax_from: AxOrder, ax_t
     tinvg = (-1) ** np.array(ax_from.gaxesi)
     finvm = (-1) ** np.array(ax_to.maxesi)
     tinvm = (-1) ** np.array(ax_from.maxesi)
-    s.gx._value, s.gy._value, s.gz._value = ((np.array([s.gx._value, s.gy._value, s.gz._value])[fpig] * finvg * tinvg)[tpig])
-    s.bx._value, s.by._value, s.bz._value = (np.array([s.bx._value, s.by._value, s.bz._value])[fpim] * finvm * tinvm)[tpim]
+    if not isinstance(s, DniParams):
+        s.gx._value, s.gy._value, s.gz._value = ((np.array([s.gx._value, s.gy._value, s.gz._value])[fpig] * finvg * tinvg)[tpig])
+        s.bx._value, s.by._value, s.bz._value = (np.array([s.bx._value, s.by._value, s.bz._value])[fpim] * finvm * tinvm)[tpim]
+    else:
+        s.ABX._value, s.ABY._value, s.ABZ._value = ((np.array([s.ABX._value, s.ABY._value, s.ABZ._value])[fpig] * finvg * tinvg)[tpig])
+        s.ASX._value, s.ASY._value, s.ASZ._value = ((np.array([s.ASX._value, s.ASY._value, s.ASZ._value])[fpig] * finvg * tinvg)[tpig])
+        s.MBX._value, s.MBY._value, s.MBZ._value = (np.array([s.MBX._value, s.MBY._value, s.MBZ._value])[fpim] * finvm * tinvm)[tpim]
+        s.MSX._value, s.MSY._value, s.MSZ._value = (np.array([s.MSX._value, s.MSY._value, s.MSZ._value])[fpim] * finvm * tinvm)[tpim]
+        if isinstance(s, DniUnc):
+            s.ABX._value, s.ABY._value, s.ABZ._value = np.abs([s.ABX._value, s.ABY._value, s.ABZ._value])
+            s.ASX._value, s.ASY._value, s.ASZ._value = np.abs([s.ASX._value, s.ASY._value, s.ASZ._value])
+            s.MBX._value, s.MBY._value, s.MBZ._value = np.abs([s.MBX._value, s.MBY._value, s.MBZ._value])
+            s.MSX._value, s.MSY._value, s.MSZ._value = np.abs([s.MSX._value, s.MSY._value, s.MSZ._value])
+
 
 def reorder_axes_recursively(obj: Any, ax_from: AxOrder, ax_to: AxOrder):
-    if isinstance(obj, (Survey, ManualCorrectedSurvey)):
+    if isinstance(obj, (Survey, ManualCorrectedSurvey, DniParams)):
         reorder_axes(obj, ax_from, ax_to)
+    
     if isinstance(obj, sequence_types):
         for v in obj:
             reorder_axes_recursively(v, ax_from, ax_to)
