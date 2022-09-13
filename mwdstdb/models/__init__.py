@@ -14,7 +14,7 @@ from .run import Run, RunCreate, RunGet, RunUpdate, RunDB, RunCreateWorkflow
 from .run import ContinuousInclination
 from .survey import Survey, SurveyGet, WorkflowSurvey
 from .reference import RefParams, Reference
-from .correction import CorrectionGet, CorrectionResult, DniParams, ManualCorrectionResult, ManualCorrectedSurvey, QcBounds
+from .correction import CorrectionGet, CorrectionResult, DniParams, DniUnc, ManualCorrectionResult, ManualCorrectedSurvey, QcBounds
 from .toolcode import ToolcodeInfo, Toolcode, ErrorTerm
 from .tasks import Task, TaskDb, TaskType, TaskStatus
 from .user import UserBase, UserCreate, User, UserPermissions, Role

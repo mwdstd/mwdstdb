@@ -17,7 +17,7 @@ class UserBase(BaseModel):
     _coll = 'users'
     name: str
     login: str
-    us: dict = StorageUnitSystem
+    us: dict = { **StorageUnitSystem, 'ratio_fine': 'ppm' }
 
 
 class UserCreate(UserBase):
