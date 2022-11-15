@@ -74,11 +74,7 @@ async def create_well(
         d: dict = Depends(well_in_create), 
         db = Depends(DBEngine.get_db), 
         dbc = Depends(DBEngine.get_client), 
-        can_change_service = Depends(Authorize(Action.well_change_service, False))
         ):
-
-    if not can_change_service: 
-        del d['service_type']
 
     boreholes = d.get('boreholes') or []
     del d['boreholes']

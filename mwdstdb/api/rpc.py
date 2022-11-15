@@ -66,13 +66,9 @@ from mwdstdb.tasks.corlv3 import correction_lv3
 class CorrectionOptions(BaseModel):
     filter: List[bool]
     status_msa: bool
-    status_multi: bool
-    status_auto: bool
     dni_cs: Optional[models.DniParams]
 
 def process_run(run: dict, opts: CorrectionOptions):
-    run['status_multi'] = opts['status_multi']
-    run['status_auto'] = opts['status_auto']
     run['status_msa'] = opts['status_msa']
     run['surveys'] = [s for i, s in enumerate(run['surveys']) if opts['filter'][i]]
     run['reference'] = [s for i, s in enumerate(run['reference']) if opts['filter'][i]]
@@ -143,8 +139,6 @@ async def set_opts(
                 borehole_id = await crud.get_object_field(db, models.Run, run_id, 'parent_id')
                 await crud.update_object(db, models.Run, run_id, {
                     'status_msa': opts['status_msa'], 
-                    'status_auto': opts['status_auto'],
-                    'status_multi': opts['status_multi'],
                     }, session=s)
                 surveys = await crud.get_child_objects(db, models.Survey, run_id, session=s)
                 for su, flt in zip(surveys, opts['filter']):

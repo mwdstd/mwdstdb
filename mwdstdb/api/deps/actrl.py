@@ -27,7 +27,6 @@ class Action(str, Enum):
     well_read = 'well:read'
     well_write = 'well:write'
     well_delete = 'well:delete'
-    well_change_service = 'well:change_service'
     well_maintenance = 'well:maintenance'
     borehole_create = 'borehole:create'
     borehole_read = 'borehole:read'

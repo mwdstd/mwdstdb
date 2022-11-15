@@ -64,7 +64,7 @@ async def get_task_request(
 )
 async def get_all_tasks(
         parent_id: Optional[models.ObjectIdStr] = None,
-        type: Optional[models.TaskType] = None,
+        type: Optional[models.TaskType] = models.TaskType.correction,
         db = Depends(DBEngine.get_db),
         ):
     q = {}

@@ -94,9 +94,6 @@ async def finalize_borehole(
 		db = Depends(DBEngine.get_db), 
 		):
 	await crud.update_object(db, models.Well, well_id, {'borehole_id': None})
-	service_type = await crud.get_object_field(db, models.Well, well_id, 'service_type')
-	if service_type == models.well.ServiceType.advanced:
-		await start_task(db, well_id, 'decunc')
 	
 
 

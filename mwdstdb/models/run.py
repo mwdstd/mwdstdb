@@ -33,9 +33,7 @@ class Run(BaseModel):
     bha: Optional[BHA] #SL >= 2 (1 for EDI estimation)
     mud_weight: Optional[Density] #SL >= 2
     geometry: Optional[List[Section]] #SL >= 4
-    status_auto: bool = True
     status_msa: bool = True
-    status_multi: bool = False
 
 class RunDB(Run, DBModelMixin):
     active: bool = False

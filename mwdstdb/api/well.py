@@ -45,10 +45,7 @@ async def update_well(
         well_id: str, 
         d: dict = Depends(well_in_update), 
         db = Depends(DBEngine.get_db), 
-        can_change_service = Depends(Authorize(Action.well_change_service, False))
         ):
-    if not can_change_service: 
-        del d['service_type']
     # if await crud.has_children(db, models.Borehole, well_id):
     #     old_geomag = await crud.get_object_field(db, models.Well, well_id, 'geomag')
     #     if d['geomag'] != old_geomag:
